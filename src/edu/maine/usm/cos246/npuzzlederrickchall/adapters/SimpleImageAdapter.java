@@ -3,7 +3,6 @@ package edu.maine.usm.cos246.npuzzlederrickchall.adapters;
 
 import edu.maine.usm.cos246.npuzzlederrickchall.R;
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,13 +29,11 @@ public class SimpleImageAdapter extends ArrayAdapter<String> {
     ImageView imageView = (ImageView) rowView.findViewById(R.id.icon);
     
     textView.setText(this.elements[position]);
-
-    Log.i("Puzzle", "Position: " + position + " elements: " + this.elements.length);
     
     String puzzle = this.elements[position];
-    Log.i("Puzzle", puzzle);
+
     int resourceId = this.context.getResources().getIdentifier(puzzle, "drawable", this.context.getApplicationInfo().packageName);
-    Log.i("Puzzle1", Integer.toString(resourceId));
+
     imageView.setImageResource(resourceId);
 
     return rowView;

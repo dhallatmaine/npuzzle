@@ -15,9 +15,7 @@ public class ImageSelection extends ListActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        
         this.elements = getFieldsFromDrawable();
-        
         setListAdapter(new SimpleImageAdapter(this, this.elements));
     }
     
@@ -26,7 +24,6 @@ public class ImageSelection extends ListActivity {
     	String[] drawables = new String[fields.length];
     	for (int i = 0; i < fields.length; i++) {
     		drawables[i] = fields[i].getName();
-    		Log.i("Image", fields[i].getName());
     	}
     	return drawables;
     }
