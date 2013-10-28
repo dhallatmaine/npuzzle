@@ -8,6 +8,6 @@
         android:id="@+id/solution"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent" 
-        android:scaleType="center" />
+        android:scaleType="fitCenter" />
     
 </LinearLayout>
