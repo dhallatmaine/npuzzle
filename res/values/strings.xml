@@ -3,5 +3,9 @@
 
     <string name="app_name">nPuzzleDerrickCHall</string>
     <string name="action_settings">N-Puzzle</string>
+    <string name="quit">Quit</string>
+    <string name="reset">Reset</string>
+    <string name="change_image">Change Image</string>
+    <string name="change_difficulty">Difficulty</string>
 
 </resources>

@@ -5,10 +5,14 @@ import java.util.ArrayList;
 import edu.maine.usm.cos246.npuzzlederrickchall.adapters.SimpleGridImageAdapter;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.os.Handler;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.widget.GridView;
 import android.widget.ImageView;
 
@@ -30,6 +34,38 @@ public class GamePlay extends Activity {
 			}
 		}, 3000L);
 	    
+	}
+	
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+	    MenuInflater inflater = getMenuInflater();
+	    inflater.inflate(R.menu.image_selection, menu);
+	    return true;
+	}
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+	    // Handle item selection
+	    switch (item.getItemId()) {
+	        case R.id.quit:
+	            quit();
+	            return true;
+	        case R.id.reset:
+	            reset();
+	            return true;
+	        default:
+	            return super.onOptionsItemSelected(item);
+	    }
+	}
+	
+	private void quit() {
+		finish();
+	}
+	
+	private void reset() {
+		Intent intent = getIntent();
+		finish();
+		startActivity(intent);
 	}
 	
 	private void displayImage() {

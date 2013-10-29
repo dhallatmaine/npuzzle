@@ -1,8 +1,11 @@
-<menu xmlns:android="http://schemas.android.com/apk/res/android" >
-
-    <item
-        android:id="@+id/action_settings"
-        android:orderInCategory="100"
-        android:title="@string/action_settings"/>
-
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/reset"
+          android:title="@string/reset"/>
+    <item android:id="@+id/quit"
+          android:title="@string/quit"/>
+    <item android:id="@+id/change_image"
+          android:title="@string/change_image"/>
+    <item android:id="@+id/difficulty"
+          android:title="@string/change_difficulty"/>
 </menu>
