@@ -44,10 +44,32 @@ public class GamePlay extends Activity {
 	
 	private void splitImage() {
 		ArrayList<Bitmap> imageChunks = splitImage(image, 25);
+		ArrayList<Bitmap> shuffledChunks = shuffleList(imageChunks);
 		setContentView(R.layout.activity_game_play_grid);
 		GridView gridView = (GridView) findViewById(R.id.gameBoard);
-		gridView.setAdapter(new SimpleGridImageAdapter(GamePlay.this, imageChunks));
+		gridView.setAdapter(new SimpleGridImageAdapter(GamePlay.this, shuffledChunks));
 		gridView.setNumColumns((int) Math.sqrt(25));
+	}
+	
+	private ArrayList<Bitmap> shuffleList(ArrayList<Bitmap> imageChunks) {
+		ArrayList<Bitmap> shuffledImages = new ArrayList<Bitmap>();
+		
+		for (int i = (imageChunks.size()-1); i >= 0; i--) {
+			shuffledImages.add(imageChunks.get(i));
+		}
+		
+		shuffledImages.remove(shuffledImages.size()-1);
+
+		Bitmap nMinusOne = shuffledImages.get(shuffledImages.size()-1);
+		Bitmap n = shuffledImages.get(shuffledImages.size()-2);
+		
+		shuffledImages.remove(nMinusOne);
+		shuffledImages.remove(n);
+		
+		shuffledImages.add(nMinusOne);
+		shuffledImages.add(n);		
+		
+		return shuffledImages;
 	}
 	
 	private ArrayList<Bitmap> splitImage(ImageView image, int chunkNumbers) {	

@@ -10,20 +10,17 @@ import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
 
-//The adapter class associated with the ChunkedImageActivity class
 public class SimpleGridImageAdapter extends BaseAdapter {
 
-	private Context mContext;
+	private Context context;
 	private ArrayList<Bitmap> imageChunks;
 	private int imageWidth, imageHeight;
 	
-	//constructor
 	public SimpleGridImageAdapter(Context c, ArrayList<Bitmap> images){
-		mContext = c;
+		context = c;
 		imageChunks = images;
 		imageWidth = images.get(0).getWidth();
 		imageHeight = images.get(0).getHeight();
-		images.remove(images.size()-1);
 	}
 	
 	@Override
@@ -45,7 +42,7 @@ public class SimpleGridImageAdapter extends BaseAdapter {
 	public View getView(int position, View convertView, ViewGroup parent) {
 		ImageView image;
 		if(convertView == null){
-			image = new ImageView(mContext);
+			image = new ImageView(context);
 			image.setLayoutParams(new GridView.LayoutParams(imageWidth - 10 , imageHeight));
 			image.setPadding(0, 0, 0, 0);
 			image.setAdjustViewBounds(true);
