@@ -48,24 +48,27 @@ public class GamePlay extends Activity {
 	    // Handle item selection
 	    switch (item.getItemId()) {
 	        case R.id.quit:
-	            quit();
-	            return true;
+	            finish();
 	        case R.id.reset:
 	            reset();
-	            return true;
+	        case R.id.change_image:
+	        	changeImage();
 	        default:
 	            return super.onOptionsItemSelected(item);
 	    }
-	}
-	
-	private void quit() {
-		finish();
 	}
 	
 	private void reset() {
 		Intent intent = getIntent();
 		finish();
 		startActivity(intent);
+	}
+	
+	private void changeImage() {
+		Intent intent = new Intent();
+		intent.setClass(GamePlay.this, ImageSelection.class);
+		startActivity(intent);
+		finish();
 	}
 	
 	private void displayImage() {
