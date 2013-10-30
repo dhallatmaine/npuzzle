@@ -10,6 +10,7 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -20,10 +21,31 @@ public class GamePlay extends Activity {
 	
 	private ImageView image;
 	
+	private DIFFICULTY difficulty;
+	
+	private enum DIFFICULTY {
+		EASY (9), MEDIUM (16), HARD (25);
+		private int value;
+		private DIFFICULTY(int value) {
+			this.value = value;
+		}
+	}
+	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_game_play);
+		
+		Bundle bundle = this.getIntent().getExtras();
+		int difficultyValue = bundle.getInt("difficulty");
+		
+		Log.i("difficulty", Integer.toString(difficultyValue));
+		
+		if (difficultyValue > 0) {
+			setDifficulty(difficultyValue);
+		} else {
+			difficulty = DIFFICULTY.MEDIUM;
+		}
 		
 		displayImage();	
 		
@@ -45,17 +67,56 @@ public class GamePlay extends Activity {
 	
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
+		Log.i("Menu click", Integer.toString(item.getItemId()));
 	    // Handle item selection
 	    switch (item.getItemId()) {
 	        case R.id.quit:
 	            finish();
+	            return false;
 	        case R.id.reset:
 	            reset();
+	            return false;
 	        case R.id.change_image:
 	        	changeImage();
+	        	return false;
+	        case R.id.easy:
+	        	changeDifficulty(DIFFICULTY.EASY);
+	        	return false;
+	        case R.id.medium:
+	        	changeDifficulty(DIFFICULTY.MEDIUM);
+	        	return false;
+	        case R.id.hard:
+	        	changeDifficulty(DIFFICULTY.HARD);
+	        	return false;
 	        default:
 	            return super.onOptionsItemSelected(item);
 	    }
+	}
+	
+	private void setDifficulty(int difficultyValue) {
+		if (difficultyValue == DIFFICULTY.EASY.value) {
+			difficulty = DIFFICULTY.EASY;
+		} else if (difficultyValue == DIFFICULTY.MEDIUM.value) {
+			difficulty = DIFFICULTY.MEDIUM;
+		} else {
+			difficulty = DIFFICULTY.HARD;
+		}
+	}
+	
+	private void changeDifficulty(DIFFICULTY diff) {
+		Log.i("bundle_diffculty", Integer.toString(diff.value));
+		
+		Intent intent = new Intent();
+		intent.setClass(GamePlay.this, GamePlay.class);
+		
+		Bundle bundle = new Bundle();
+		bundle.putInt("difficulty", diff.value);
+		bundle.putString("puzzle", this.getIntent().getExtras().getString("puzzle"));
+		
+		intent.putExtras(bundle);
+		finish();
+		startActivity(intent);
+		
 	}
 	
 	private void reset() {
@@ -82,22 +143,23 @@ public class GamePlay extends Activity {
 	}
 	
 	private void splitImage() {
-		ArrayList<Bitmap> imageChunks = splitImage(image, 25);
+		ArrayList<Bitmap> imageChunks = splitImage(image, difficulty.value);
 		ArrayList<Bitmap> shuffledChunks = shuffleList(imageChunks);
 		setContentView(R.layout.activity_game_play_grid);
 		GridView gridView = (GridView) findViewById(R.id.gameBoard);
 		gridView.setAdapter(new SimpleGridImageAdapter(GamePlay.this, shuffledChunks));
-		gridView.setNumColumns((int) Math.sqrt(25));
+		gridView.setNumColumns((int) Math.sqrt(difficulty.value));
 	}
 	
 	private ArrayList<Bitmap> shuffleList(ArrayList<Bitmap> imageChunks) {
 		ArrayList<Bitmap> shuffledImages = new ArrayList<Bitmap>();
 		
+		imageChunks.remove(imageChunks.size()-1);
+		
 		for (int i = (imageChunks.size()-1); i >= 0; i--) {
 			shuffledImages.add(imageChunks.get(i));
 		}
 		
-		shuffledImages.remove(shuffledImages.size()-1);
 
 		Bitmap nMinusOne = shuffledImages.get(shuffledImages.size()-1);
 		Bitmap n = shuffledImages.get(shuffledImages.size()-2);

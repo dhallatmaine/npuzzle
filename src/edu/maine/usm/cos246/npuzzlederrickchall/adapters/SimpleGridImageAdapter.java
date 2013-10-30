@@ -45,7 +45,6 @@ public class SimpleGridImageAdapter extends BaseAdapter {
 			image = new ImageView(context);
 			image.setLayoutParams(new GridView.LayoutParams(imageWidth - 10 , imageHeight));
 			image.setPadding(0, 0, 0, 0);
-			image.setAdjustViewBounds(true);
 		}else{
 			image = (ImageView) convertView;
 		}

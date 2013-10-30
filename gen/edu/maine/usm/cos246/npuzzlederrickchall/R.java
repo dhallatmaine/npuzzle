@@ -26,10 +26,13 @@ public final class R {
         public static final int puzzle_2=0x7f020002;
     }
     public static final class id {
+        public static final int change_difficulty=0x7f080007;
         public static final int change_image=0x7f080006;
-        public static final int difficulty=0x7f080007;
+        public static final int easy=0x7f080008;
         public static final int gameBoard=0x7f080001;
+        public static final int hard=0x7f08000a;
         public static final int icon=0x7f080002;
+        public static final int medium=0x7f080009;
         public static final int puzzle=0x7f080003;
         public static final int quit=0x7f080005;
         public static final int reset=0x7f080004;
@@ -48,6 +51,9 @@ public final class R {
         public static final int app_name=0x7f050000;
         public static final int change_difficulty=0x7f050005;
         public static final int change_image=0x7f050004;
+        public static final int easy=0x7f050006;
+        public static final int hard=0x7f050008;
+        public static final int medium=0x7f050007;
         public static final int quit=0x7f050002;
         public static final int reset=0x7f050003;
     }

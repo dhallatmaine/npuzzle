@@ -7,5 +7,8 @@
     <string name="reset">Reset</string>
     <string name="change_image">Change Image</string>
     <string name="change_difficulty">Difficulty</string>
+    <string name="easy">easy</string>
+    <string name="medium">medium</string>
+    <string name="hard">hard</string>
 
 </resources>
