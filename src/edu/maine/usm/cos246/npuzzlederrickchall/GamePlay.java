@@ -1,3 +1,4 @@
+/* Derrick Hall <derrick.c.hall@maine.edu */
 package edu.maine.usm.cos246.npuzzlederrickchall;
 
 import java.util.ArrayList;
@@ -7,6 +8,7 @@ import edu.maine.usm.cos246.npuzzlederrickchall.adapters.SimpleGridImageAdapter;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.os.Handler;
@@ -14,14 +16,23 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Adapter;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.GridView;
 import android.widget.ImageView;
+import android.widget.ListAdapter;
+import android.widget.ListView;
 
 public class GamePlay extends Activity {
 	
+	private GridView gridView;
 	private ImageView image;
-	
 	private DIFFICULTY difficulty;
+	private int empty;
+	private ArrayList<Bitmap> gameGrid;
 	
 	private enum DIFFICULTY {
 		EASY (9), MEDIUM (16), HARD (25);
@@ -35,6 +46,8 @@ public class GamePlay extends Activity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_game_play);
+		
+		gameGrid = new ArrayList<Bitmap>();
 		
 		Bundle bundle = this.getIntent().getExtras();
 		int difficultyValue = bundle.getInt("difficulty");
@@ -57,6 +70,8 @@ public class GamePlay extends Activity {
 		}, 3000L);
 	    
 	}
+	
+	
 	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -128,6 +143,11 @@ public class GamePlay extends Activity {
 	private void changeImage() {
 		Intent intent = new Intent();
 		intent.setClass(GamePlay.this, ImageSelection.class);
+		
+		Bundle bundle = new Bundle();
+		bundle.putString("changeImage", "change");
+		
+		intent.putExtras(bundle);
 		startActivity(intent);
 		finish();
 	}
@@ -144,11 +164,77 @@ public class GamePlay extends Activity {
 	
 	private void splitImage() {
 		ArrayList<Bitmap> imageChunks = splitImage(image, difficulty.value);
-		ArrayList<Bitmap> shuffledChunks = shuffleList(imageChunks);
+		gameGrid = shuffleList(imageChunks);
 		setContentView(R.layout.activity_game_play_grid);
-		GridView gridView = (GridView) findViewById(R.id.gameBoard);
-		gridView.setAdapter(new SimpleGridImageAdapter(GamePlay.this, shuffledChunks));
+		gridView = (GridView) findViewById(R.id.gameBoard);
+		SimpleGridImageAdapter adapter = new SimpleGridImageAdapter(GamePlay.this, gameGrid);
+		adapter.notifyDataSetChanged();
+		gridView.setAdapter(adapter);
 		gridView.setNumColumns((int) Math.sqrt(difficulty.value));
+		
+		gridView.setOnItemClickListener(new OnItemClickListener() {
+	        public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
+	        	Log.i("position: ", Integer.toString(position));
+	        	Log.i("empty: ", Integer.toString(empty));
+	        	move(position);
+	        }
+	    });
+	}
+	
+	private void move(int position) {
+		int sqrt = (int)getDifficultySquareRoot();
+		int size = gameGrid.size()-1;
+		if (position == empty) {
+			return;
+		}
+		
+		if (position != 0 && position-1 == empty) {
+			Log.i("case 1, from : " + Integer.toString(position-1), " to: " + Integer.toString(empty));
+			swap(position, empty);
+			return;
+		}
+		
+		if (position != size && position+1 == empty) {
+			Log.i("case 2, from : " + Integer.toString(position+1), " to: " + Integer.toString(empty));
+			swap(position, empty);
+			return;
+		}
+		
+		if ((position-sqrt >= 0) && (gameGrid.get(position-sqrt) != null) && (position-sqrt == empty)) {
+			Log.i("case 3, from : " + Integer.toString(position-sqrt), " to: " + Integer.toString(empty));
+			swap(position, empty);
+			return;
+		}
+		
+		if ((position+sqrt < gameGrid.size()) && (gameGrid.get(position+sqrt) != null) && (position+sqrt == empty)) {
+			Log.i("case 4, from : " + Integer.toString(position+sqrt), " to: " + Integer.toString(empty));
+			swap(position, empty);
+			return;
+		}
+	}
+	
+	private void swap(int from, int to) {
+		if (from > to) {
+			swap(to, from);
+			empty = from;
+			return;
+		}
+		Log.i("remove to", Integer.toString(to));
+		Bitmap toImage = gameGrid.remove(to);
+		Log.i("remove from", Integer.toString(from));
+		Bitmap fromImage = gameGrid.remove(from);
+		
+		Log.i("add", Integer.toString(from));
+		gameGrid.add(from, toImage);
+		Log.i("add", Integer.toString(to));
+		gameGrid.add(to, fromImage);
+		
+		empty = from;
+		gridView.invalidateViews();
+	}
+	
+	private double getDifficultySquareRoot() {
+		return Math.sqrt(difficulty.value);
 	}
 	
 	private ArrayList<Bitmap> shuffleList(ArrayList<Bitmap> imageChunks) {
@@ -156,19 +242,24 @@ public class GamePlay extends Activity {
 		
 		imageChunks.remove(imageChunks.size()-1);
 		
+		Bitmap icon = BitmapFactory.decodeResource(this.getApplicationContext().getResources(), R.drawable.firefox);
+		
+		//add in reverse
 		for (int i = (imageChunks.size()-1); i >= 0; i--) {
 			shuffledImages.add(imageChunks.get(i));
 		}
 		
 
-		Bitmap nMinusOne = shuffledImages.get(shuffledImages.size()-1);
-		Bitmap n = shuffledImages.get(shuffledImages.size()-2);
+		Bitmap last = shuffledImages.get(shuffledImages.size()-1);
+		Bitmap secondToLast = shuffledImages.get(shuffledImages.size()-2);
 		
-		shuffledImages.remove(nMinusOne);
-		shuffledImages.remove(n);
+		shuffledImages.remove(last);
+		shuffledImages.remove(secondToLast);
 		
-		shuffledImages.add(nMinusOne);
-		shuffledImages.add(n);		
+		shuffledImages.add(last);
+		shuffledImages.add(secondToLast);
+		shuffledImages.add(icon);
+		empty = shuffledImages.size() - 1;
 		
 		return shuffledImages;
 	}

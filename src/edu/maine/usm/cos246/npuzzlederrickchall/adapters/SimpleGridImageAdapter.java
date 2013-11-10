@@ -1,3 +1,4 @@
+/* Derrick Hall <derrick.c.hall@maine.edu */
 package edu.maine.usm.cos246.npuzzlederrickchall.adapters;
 
 import java.util.ArrayList;
