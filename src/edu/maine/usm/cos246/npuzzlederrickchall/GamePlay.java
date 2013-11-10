@@ -32,7 +32,9 @@ public class GamePlay extends Activity {
 	private ImageView image;
 	private DIFFICULTY difficulty;
 	private int empty;
+	private int moves;
 	private ArrayList<Bitmap> gameGrid;
+	private ArrayList<Bitmap> solution;
 	
 	private enum DIFFICULTY {
 		EASY (9), MEDIUM (16), HARD (25);
@@ -49,10 +51,10 @@ public class GamePlay extends Activity {
 		
 		gameGrid = new ArrayList<Bitmap>();
 		
+		moves = 0;
+		
 		Bundle bundle = this.getIntent().getExtras();
 		int difficultyValue = bundle.getInt("difficulty");
-		
-		Log.i("difficulty", Integer.toString(difficultyValue));
 		
 		if (difficultyValue > 0) {
 			setDifficulty(difficultyValue);
@@ -174,9 +176,10 @@ public class GamePlay extends Activity {
 		
 		gridView.setOnItemClickListener(new OnItemClickListener() {
 	        public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
-	        	Log.i("position: ", Integer.toString(position));
-	        	Log.i("empty: ", Integer.toString(empty));
 	        	move(position);
+	        	if (puzzleSolved()) {
+	        		
+	        	}
 	        }
 	    });
 	}
@@ -189,25 +192,21 @@ public class GamePlay extends Activity {
 		}
 		
 		if (position != 0 && position-1 == empty) {
-			Log.i("case 1, from : " + Integer.toString(position-1), " to: " + Integer.toString(empty));
 			swap(position, empty);
 			return;
 		}
 		
 		if (position != size && position+1 == empty) {
-			Log.i("case 2, from : " + Integer.toString(position+1), " to: " + Integer.toString(empty));
 			swap(position, empty);
 			return;
 		}
 		
 		if ((position-sqrt >= 0) && (gameGrid.get(position-sqrt) != null) && (position-sqrt == empty)) {
-			Log.i("case 3, from : " + Integer.toString(position-sqrt), " to: " + Integer.toString(empty));
 			swap(position, empty);
 			return;
 		}
 		
 		if ((position+sqrt < gameGrid.size()) && (gameGrid.get(position+sqrt) != null) && (position+sqrt == empty)) {
-			Log.i("case 4, from : " + Integer.toString(position+sqrt), " to: " + Integer.toString(empty));
 			swap(position, empty);
 			return;
 		}
@@ -219,22 +218,23 @@ public class GamePlay extends Activity {
 			empty = from;
 			return;
 		}
-		Log.i("remove to", Integer.toString(to));
 		Bitmap toImage = gameGrid.remove(to);
-		Log.i("remove from", Integer.toString(from));
 		Bitmap fromImage = gameGrid.remove(from);
 		
-		Log.i("add", Integer.toString(from));
 		gameGrid.add(from, toImage);
-		Log.i("add", Integer.toString(to));
 		gameGrid.add(to, fromImage);
 		
 		empty = from;
+		moves++;
 		gridView.invalidateViews();
 	}
 	
 	private double getDifficultySquareRoot() {
 		return Math.sqrt(difficulty.value);
+	}
+	
+	private boolean puzzleSolved() {
+		return solution.equals(gameGrid);
 	}
 	
 	private ArrayList<Bitmap> shuffleList(ArrayList<Bitmap> imageChunks) {
@@ -243,6 +243,9 @@ public class GamePlay extends Activity {
 		imageChunks.remove(imageChunks.size()-1);
 		
 		Bitmap icon = BitmapFactory.decodeResource(this.getApplicationContext().getResources(), R.drawable.firefox);
+		
+		solution = new ArrayList<Bitmap>(shuffledImages);
+		solution.add(icon);
 		
 		//add in reverse
 		for (int i = (imageChunks.size()-1); i >= 0; i--) {
