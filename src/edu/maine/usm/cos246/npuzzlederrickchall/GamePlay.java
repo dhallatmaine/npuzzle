@@ -177,9 +177,6 @@ public class GamePlay extends Activity {
 		gridView.setOnItemClickListener(new OnItemClickListener() {
 	        public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
 	        	move(position);
-	        	if (puzzleSolved()) {
-	        		
-	        	}
 	        }
 	    });
 	}
@@ -227,6 +224,11 @@ public class GamePlay extends Activity {
 		empty = from;
 		moves++;
 		gridView.invalidateViews();
+		
+		Log.i("Checking for solution", "!!");
+		if (puzzleSolved()) {
+    		Log.i("Puzzle Solved", "SOLVED!");
+    	}
 	}
 	
 	private double getDifficultySquareRoot() {
@@ -244,14 +246,13 @@ public class GamePlay extends Activity {
 		
 		Bitmap icon = BitmapFactory.decodeResource(this.getApplicationContext().getResources(), R.drawable.firefox);
 		
-		solution = new ArrayList<Bitmap>(shuffledImages);
-		solution.add(icon);
-		
 		//add in reverse
-		for (int i = (imageChunks.size()-1); i >= 0; i--) {
+		for (int i = (imageChunks.size()-1); i >= 0 ; i--) {
 			shuffledImages.add(imageChunks.get(i));
 		}
 		
+		solution = new ArrayList<Bitmap>(shuffledImages);
+		solution.add(icon);
 
 		Bitmap last = shuffledImages.get(shuffledImages.size()-1);
 		Bitmap secondToLast = shuffledImages.get(shuffledImages.size()-2);
@@ -262,6 +263,7 @@ public class GamePlay extends Activity {
 		shuffledImages.add(last);
 		shuffledImages.add(secondToLast);
 		shuffledImages.add(icon);
+		
 		empty = shuffledImages.size() - 1;
 		
 		return shuffledImages;
